@@ -1,0 +1,23 @@
+# Oiinux .gitignore
+
+# Built artifacts (too large for git)
+toolchain/src/
+toolchain/build/
+toolchain/installed/
+kernel/src/
+userspace/src/
+userspace/build/
+rootfs/
+iso/staging/
+logs/
+
+# DO track these (our configs and scripts)
+!kernel/config/
+!kernel/config/oiinux.config
+
+# OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
