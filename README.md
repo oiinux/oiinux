@@ -1,65 +1,83 @@
-# 🐱 Oiinux
 
-> A Linux-based operating system built from scratch. Named after the oiia cat.
+# oiinux 
 
-## Project Structure
+> sigma self developed (may or may not be vibecoded) oiia themed linux os
+
+oiinux is a custom linux distro built from scratch. custom kernel, custom init, custom installer, the whole thing. oiia oiia oiia.
+
+## what it is
+
+- custom linux kernel 6.9.7
+
+- musl libc based (no glibc slop)
+
+- busybox userland
+
+- apk package manager (alpine packages)
+
+- ncurses TUI installer (arch-style)
+
+- xorg + KDE plasma (or whatever DE you want)
+
+- boots in QEMU, installs to real disk
+
+## status
+
+**v0.1.0** — boots, installs, runs. still cooking.
+
+- [x] kernel boots
+
+- [x] networking
+
+- [x] TUI installer with DE selection
+
+- [x] KDE plasma
+
+- [ ] custom oiinux DE (wip)
+
+- [ ] custom bootloader
+
+- [ ] release ISO
+
+## building
+
+```bash
+
+source ~/oiinux/oiinux-env.sh
+
+# compile init
+
+x86_64-oiinux-linux-musl-gcc -static -O2 -o rootfs/init init/init.c
+
+# repack initramfs
+
+cd rootfs && sudo find . | sudo cpio -oH newc | gzip > ../iso/staging/boot/initramfs.cpio.gz
+
+# build ISO
+
+grub-mkrescue -o oiinux-0.1.0.iso iso/staging -- -volid OIINUX
 
 ```
-oiinux/
-├── toolchain/      # Cross-compilation toolchain (GCC, binutils, musl)
-├── kernel/         # Linux kernel source + our config
-├── userspace/      # All userspace packages (built from source)
-├── init/           # Oiinux init system (PID 1)
-├── rootfs/         # The assembled root filesystem
-├── iso/            # Final bootable ISO output
-├── scripts/        # Build automation scripts
-│   ├── 00-setup.sh
-│   ├── 01-toolchain.sh
-│   └── 02-kernel.sh
-├── packages/       # Package build definitions (.oii format, someday)
-└── branding/       # Oiia cat artwork, boot splash, wallpapers
+
+## running
+
+```bash
+
+qemu-system-x86_64 -cdrom oiinux-0.1.0.iso -m 2G \
+
+  -netdev user,id=net0 -device e1000,netdev=net0 \
+
+  -vga virtio -display gtk
+
 ```
 
-## Build Order
+## license
 
-1. `./scripts/00-setup.sh`   — set up directories and env vars
-2. `./scripts/01-toolchain.sh` — build cross-compiler + musl libc
-3. `./scripts/02-kernel.sh`  — configure and compile the kernel
-4. (more scripts coming as the project grows)
+GPL v3 — you can look, you can learn, you cannot steal.
 
-## Requirements
+## credits
 
-- x86_64 Linux build host (Arch or Debian/Ubuntu recommended)
-- At minimum 8GB RAM (more = faster builds)
-- At minimum 50GB free disk space (100GB+ recommended)
-- Packages: `build-essential`, `bison`, `flex`, `libssl-dev`, `bc`, `git`, `wget`, `xz-utils`, `python3`, `libelf-dev`, `libncurses-dev`
+built by [@oiinux](https://github.com/oiinux) with way too much patience and not enough sleep. (tysm claude)
 
-## Philosophy
+oiia oiia oiia 
 
-- **Everything from source.** No prebuilt binaries.
-- **musl libc** over glibc. Cleaner, smaller, ours.
-- **We own it.** If it runs on Oiinux, we built it.
-- **oiia. 🐱**
-
-## Targets
-
-- [x] Project scaffold
-- [ ] Working cross-compilation toolchain
-- [ ] Bootable kernel (says hello)
-- [ ] Minimal root filesystem
-- [ ] Shell login
-- [ ] Init system
-- [ ] Package manager
-- [ ] Networking
-- [ ] Graphical interface
-- [ ] oiia cat boot animation
-- [ ] World domination
-
-## Team
-
-- your name here
-- your friend's name here
-
----
-
-*"from the kernel up, for the oiia cat"*
