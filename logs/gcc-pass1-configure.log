@@ -1,0 +1,124 @@
+checking build system type... x86_64-pc-linux-gnu
+checking host system type... x86_64-pc-linux-gnu
+checking target system type... x86_64-oiinux-linux-musl
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether ln works... yes
+checking whether ln -s works... yes
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for gawk... gawk
+checking for libitm support... yes
+checking for libsanitizer support... yes
+checking for libphobos support... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking for gcc option to accept ISO C99... none needed
+checking for g++... g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking whether g++ accepts -static-libstdc++ -static-libgcc... yes
+checking for gnatbind... no
+checking for gnatmake... no
+checking whether compiler driver understands Ada and is recent enough... no
+checking for gdc... no
+checking whether the D compiler works... no
+checking for cargo... no
+checking how to compare bootstrapped objects... cmp --ignore-initial=16 $$f1 $$f2
+checking whether g++ supports C++11 features by default... yes
+checking for objdir... .libs
+configure: WARNING: using in-tree isl, disabling version check
+*** This configuration is not supported in the following subdirectories:
+     target-libquadmath target-libstdc++-v3 gnattools gotools libgrust target-libada target-libphobos target-zlib target-libbacktrace target-libgfortran target-libgo target-libffi target-libgm2 target-libobjc target-libgrust target-libgomp target-libatomic target-libvtv target-libssp target-libitm target-libsanitizer
+    (Any other directories should still work fine.)
+checking for default BUILD_CONFIG... 
+checking for --enable-vtable-verify... no
+checking for bison... bison -y
+checking for bison... bison
+checking for gm4... no
+checking for gnum4... no
+checking for m4... m4
+checking for flex... flex
+checking for flex... flex
+checking for makeinfo... makeinfo
+checking for expect... no
+checking for runtest... no
+checking for ar... ar
+checking for as... as
+checking for dlltool... no
+checking for dsymutil... no
+checking for ld... ld
+checking for lipo... no
+checking for nm... nm
+checking for ranlib... ranlib
+checking for strip... strip
+checking for windres... no
+checking for windmc... no
+checking for objcopy... objcopy
+checking for objdump... objdump
+checking for otool... no
+checking for readelf... readelf
+checking for -plugin option... --plugin /usr/libexec/gcc/x86_64-linux-gnu/13/liblto_plugin.so
+checking for x86_64-oiinux-linux-musl-cc... no
+checking for x86_64-oiinux-linux-musl-gcc... no
+checking for x86_64-oiinux-linux-musl-c++... no
+checking for x86_64-oiinux-linux-musl-g++... no
+checking for x86_64-oiinux-linux-musl-cxx... no
+checking for x86_64-oiinux-linux-musl-gxx... no
+checking for x86_64-oiinux-linux-musl-gcc... no
+checking for x86_64-oiinux-linux-musl-gfortran... no
+checking for x86_64-oiinux-linux-musl-gccgo... no
+checking for x86_64-oiinux-linux-musl-gdc... no
+checking for x86_64-oiinux-linux-musl-gm2... no
+checking for ar... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/ar
+checking for as... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/as
+checking for dlltool... no
+checking for x86_64-oiinux-linux-musl-dlltool... no
+checking for dsymutil... no
+checking for x86_64-oiinux-linux-musl-dsymutil... no
+checking for ld... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/ld
+checking for lipo... no
+checking for x86_64-oiinux-linux-musl-lipo... no
+checking for nm... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/nm
+checking for objcopy... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/objcopy
+checking for objdump... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/objdump
+checking for otool... no
+checking for x86_64-oiinux-linux-musl-otool... no
+checking for ranlib... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/ranlib
+checking for readelf... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/readelf
+checking for strip... /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin/strip
+checking for windres... no
+checking for x86_64-oiinux-linux-musl-windres... no
+checking for windmc... no
+checking for x86_64-oiinux-linux-musl-windmc... no
+checking where to find the target ar... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target as... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target cc... just compiled
+checking where to find the target c++... pre-installed
+checking where to find the target c++ for libstdc++... pre-installed
+checking where to find the target dlltool... pre-installed
+checking where to find the target dsymutil... pre-installed
+checking where to find the target gcc... just compiled
+checking where to find the target gfortran... pre-installed
+checking where to find the target gccgo... pre-installed
+checking where to find the target gdc... pre-installed
+checking where to find the target gm2... pre-installed
+checking where to find the target ld... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target lipo... pre-installed
+checking where to find the target nm... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target objcopy... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target objdump... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target otool... pre-installed
+checking where to find the target ranlib... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target readelf... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target strip... pre-installed in /home/cigany/oiinux/toolchain/installed/x86_64-oiinux-linux-musl/bin
+checking where to find the target windres... pre-installed
+checking where to find the target windmc... pre-installed
+checking whether to enable maintainer-specific portions of Makefiles... no
+configure: creating ./config.status
+config.status: creating Makefile

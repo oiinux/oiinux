@@ -1,0 +1,14 @@
+  SYMLINK /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/build
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/modules.order
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/modules.builtin
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/modules.builtin.modinfo
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/fs/efivarfs/efivarfs.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/drivers/thermal/intel/x86_pkg_temp_thermal.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/nf_log_syslog.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/xt_mark.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/xt_nat.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/xt_LOG.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/xt_MASQUERADE.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/netfilter/xt_addrtype.ko
+  INSTALL /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux/kernel/net/ipv4/netfilter/iptable_nat.ko
+  DEPMOD  /home/cigany/oiinux/rootfs/lib/modules/6.9.7-oiinux
