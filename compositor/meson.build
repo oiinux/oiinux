@@ -5,6 +5,7 @@ wlroots = dependency('wlroots-0.18')
 wayland = dependency('wayland-server')
 wayland_protocols = dependency('wayland-protocols')
 wayland_scanner = find_program('wayland-scanner')
+xkbcommon = dependency('xkbcommon')
 
 xdg_shell_xml = '/usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml'
 
@@ -20,4 +21,4 @@ xdg_shell_c = custom_target('xdg-shell-protocol.c',
 
 executable('oiinux-compositor',
   ['main.c', xdg_shell_c, xdg_shell_h],
-  dependencies: [wlroots, wayland])
+  dependencies: [wlroots, wayland, xkbcommon])

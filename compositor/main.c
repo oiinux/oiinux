@@ -12,9 +12,11 @@
 #include <wlr/types/wlr_seat.h>
 #include <wlr/types/wlr_xdg_shell.h>
 #include <wlr/types/wlr_xdg_output_v1.h>
-#include <wlr/types/wlr_shm.h>
+#include <wlr/types/wlr_cursor.h>
+#include <wlr/types/wlr_xcursor_manager.h>
 #include <wlr/util/log.h>
 #include <wayland-server-core.h>
+#include <xkbcommon/xkbcommon.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -27,9 +29,17 @@ struct oiinux_server {
     struct wlr_output_layout *output_layout;
     struct wlr_xdg_shell *xdg_shell;
     struct wlr_seat *seat;
+    struct wlr_cursor *cursor;
+    struct wlr_xcursor_manager *cursor_mgr;
     struct wl_listener new_output;
     struct wl_listener new_xdg_toplevel;
+    struct wl_listener cursor_motion;
+    struct wl_listener cursor_motion_absolute;
+    struct wl_listener cursor_button;
+    struct wl_listener cursor_axis;
+    struct wl_listener new_input;
     struct wl_list toplevels;
+    struct wl_list keyboards;
 };
 
 struct oiinux_output {
@@ -45,6 +55,14 @@ struct oiinux_toplevel {
     struct wlr_scene_tree *scene_tree;
     struct wl_listener map;
     struct wl_listener unmap;
+    struct wl_listener destroy;
+};
+
+struct oiinux_keyboard {
+    struct wl_list link;
+    struct oiinux_server *server;
+    struct wlr_keyboard *wlr_keyboard;
+    struct wl_listener key;
     struct wl_listener destroy;
 };
 
@@ -114,10 +132,97 @@ static void server_new_xdg_toplevel(struct wl_listener *listener, void *data) {
     wl_list_insert(&server->toplevels, &toplevel->link);
 }
 
+static void keyboard_handle_key(struct wl_listener *listener, void *data) {
+    struct oiinux_keyboard *keyboard = wl_container_of(listener, keyboard, key);
+    struct oiinux_server *server = keyboard->server;
+    struct wlr_keyboard_key_event *event = data;
+    struct wlr_seat *seat = server->seat;
+    wlr_seat_set_keyboard(seat, keyboard->wlr_keyboard);
+    wlr_seat_keyboard_notify_key(seat, event->time_msec, event->keycode, event->state);
+}
+
+static void keyboard_handle_destroy(struct wl_listener *listener, void *data) {
+    struct oiinux_keyboard *keyboard = wl_container_of(listener, keyboard, destroy);
+    wl_list_remove(&keyboard->key.link);
+    wl_list_remove(&keyboard->destroy.link);
+    wl_list_remove(&keyboard->link);
+    free(keyboard);
+}
+
+static void server_new_keyboard(struct oiinux_server *server, struct wlr_input_device *device) {
+    struct wlr_keyboard *wlr_keyboard = wlr_keyboard_from_input_device(device);
+    struct oiinux_keyboard *keyboard = calloc(1, sizeof(*keyboard));
+    keyboard->server = server;
+    keyboard->wlr_keyboard = wlr_keyboard;
+    struct xkb_context *context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+    struct xkb_keymap *keymap = xkb_keymap_new_from_names(context, NULL, XKB_KEYMAP_COMPILE_NO_FLAGS);
+    wlr_keyboard_set_keymap(wlr_keyboard, keymap);
+    xkb_keymap_unref(keymap);
+    xkb_context_unref(context);
+    wlr_keyboard_set_repeat_info(wlr_keyboard, 25, 600);
+    keyboard->key.notify = keyboard_handle_key;
+    wl_signal_add(&wlr_keyboard->events.key, &keyboard->key);
+    keyboard->destroy.notify = keyboard_handle_destroy;
+    wl_signal_add(&device->events.destroy, &keyboard->destroy);
+    wlr_seat_set_keyboard(server->seat, wlr_keyboard);
+    wl_list_insert(&server->keyboards, &keyboard->link);
+}
+
+static void server_new_pointer(struct oiinux_server *server, struct wlr_input_device *device) {
+    wlr_cursor_attach_input_device(server->cursor, device);
+}
+
+static void server_new_input(struct wl_listener *listener, void *data) {
+    struct oiinux_server *server = wl_container_of(listener, server, new_input);
+    struct wlr_input_device *device = data;
+    switch (device->type) {
+    case WLR_INPUT_DEVICE_KEYBOARD:
+        server_new_keyboard(server, device);
+        break;
+    case WLR_INPUT_DEVICE_POINTER:
+        server_new_pointer(server, device);
+        break;
+    default:
+        break;
+    }
+    uint32_t caps = WL_SEAT_CAPABILITY_POINTER;
+    if (!wl_list_empty(&server->keyboards)) caps |= WL_SEAT_CAPABILITY_KEYBOARD;
+    wlr_seat_set_capabilities(server->seat, caps);
+}
+
+static void server_cursor_motion(struct wl_listener *listener, void *data) {
+    struct oiinux_server *server = wl_container_of(listener, server, cursor_motion);
+    struct wlr_pointer_motion_event *event = data;
+    wlr_cursor_move(server->cursor, &event->pointer->base, event->delta_x, event->delta_y);
+    wlr_cursor_set_xcursor(server->cursor, server->cursor_mgr, "default");
+}
+
+static void server_cursor_motion_absolute(struct wl_listener *listener, void *data) {
+    struct oiinux_server *server = wl_container_of(listener, server, cursor_motion_absolute);
+    struct wlr_pointer_motion_absolute_event *event = data;
+    wlr_cursor_warp_absolute(server->cursor, &event->pointer->base, event->x, event->y);
+    wlr_cursor_set_xcursor(server->cursor, server->cursor_mgr, "default");
+}
+
+static void server_cursor_button(struct wl_listener *listener, void *data) {
+    struct oiinux_server *server = wl_container_of(listener, server, cursor_button);
+    struct wlr_pointer_button_event *event = data;
+    wlr_seat_pointer_notify_button(server->seat, event->time_msec, event->button, event->state);
+}
+
+static void server_cursor_axis(struct wl_listener *listener, void *data) {
+    struct oiinux_server *server = wl_container_of(listener, server, cursor_axis);
+    struct wlr_pointer_axis_event *event = data;
+    wlr_seat_pointer_notify_axis(server->seat, event->time_msec, event->orientation,
+        event->delta, event->delta_discrete, event->source, event->relative_direction);
+}
+
 int main(int argc, char *argv[]) {
     wlr_log_init(WLR_DEBUG, NULL);
     struct oiinux_server server = {0};
     wl_list_init(&server.toplevels);
+    wl_list_init(&server.keyboards);
+
     server.display = wl_display_create();
     server.backend = wlr_backend_autocreate(
         wl_display_get_event_loop(server.display), NULL);
@@ -130,15 +235,31 @@ int main(int argc, char *argv[]) {
     wlr_compositor_create(server.display, 5, server.renderer);
     wlr_subcompositor_create(server.display);
     wlr_data_device_manager_create(server.display);
+    wlr_xdg_output_manager_v1_create(server.display, server.output_layout);
     server.xdg_shell = wlr_xdg_shell_create(server.display, 3);
     server.seat = wlr_seat_create(server.display, "seat0");
-    wlr_seat_set_capabilities(server.seat, WL_SEAT_CAPABILITY_POINTER | WL_SEAT_CAPABILITY_KEYBOARD);
 
-    wlr_xdg_output_manager_v1_create(server.display, server.output_layout);
+    server.cursor = wlr_cursor_create();
+    wlr_cursor_attach_output_layout(server.cursor, server.output_layout);
+    server.cursor_mgr = wlr_xcursor_manager_create(NULL, 24);
+    wlr_xcursor_manager_load(server.cursor_mgr, 1);
+
+    server.cursor_motion.notify = server_cursor_motion;
+    wl_signal_add(&server.cursor->events.motion, &server.cursor_motion);
+    server.cursor_motion_absolute.notify = server_cursor_motion_absolute;
+    wl_signal_add(&server.cursor->events.motion_absolute, &server.cursor_motion_absolute);
+    server.cursor_button.notify = server_cursor_button;
+    wl_signal_add(&server.cursor->events.button, &server.cursor_button);
+    server.cursor_axis.notify = server_cursor_axis;
+    wl_signal_add(&server.cursor->events.axis, &server.cursor_axis);
+
     server.new_output.notify = server_new_output;
     wl_signal_add(&server.backend->events.new_output, &server.new_output);
     server.new_xdg_toplevel.notify = server_new_xdg_toplevel;
     wl_signal_add(&server.xdg_shell->events.new_toplevel, &server.new_xdg_toplevel);
+    server.new_input.notify = server_new_input;
+    wl_signal_add(&server.backend->events.new_input, &server.new_input);
+
     const char *socket = wl_display_add_socket_auto(server.display);
     if (!socket) { return 1; }
     if (!wlr_backend_start(server.backend)) { return 1; }
