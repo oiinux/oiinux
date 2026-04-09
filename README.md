@@ -23,7 +23,7 @@ oiinux is a custom linux distro built from scratch. custom kernel, custom init, 
 
 ## status
 
-**v0.1.0** — boots, installs, runs. still cooking.
+**v0.1.0** - boots, installs, runs. still cooking.
 
 - [x] kernel boots
 
@@ -73,7 +73,7 @@ qemu-system-x86_64 -cdrom oiinux-0.1.0.iso -m 2G \
 
 ## license
 
-GPL v3 — you can look, you can learn, you cannot steal.
+GPL v3 - you can look, you can learn, you cannot steal.
 
 ## credits
 
